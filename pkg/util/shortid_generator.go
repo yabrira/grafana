@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"regexp"
-	"sync"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
@@ -23,11 +22,6 @@ var (
 	ErrUIDFormatInvalid = errors.New("invalid format of UID. Only letters, numbers, '-' and '_' are allowed")
 	ErrUIDEmpty         = fmt.Errorf("UID is empty")
 )
-
-// We want to protect our number generator as they are not thread safe. Not using
-// the mutex could result in panics in certain cases where UIDs would be generated
-// at the same time.
-var mtx sync.Mutex
 
 // Legacy UID pattern
 var validUIDCharPattern = `a-zA-Z0-9\-\_`
@@ -50,9 +44,6 @@ var node *snowflake.Node
 // it is guaranteed to have a character as the first letter
 // This UID will be a valid k8s name
 func GenerateShortUID() string {
-	mtx.Lock()
-	defer mtx.Unlock()
-
 	if node == nil {
 		// ignoring the error happens when input outside 0-1023
 		node, _ = snowflake.NewNode(rand.Int63n(1024))
@@ -86,9 +77,6 @@ func ValidateUID(uid string) error {
 	}
 	if IsShortUIDTooLong(uid) {
 		return ErrUIDTooLong
-	}
-	if !IsValidShortUID(uid) {
-		return ErrUIDFormatInvalid
 	}
 	return nil
 }
