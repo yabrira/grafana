@@ -260,6 +260,9 @@ func (hs *HTTPServer) registerRoutes() {
 	// api renew session based on cookie
 	r.Get("/api/login/ping", quota(string(auth.QuotaTargetSrv)), routing.Wrap(hs.LoginAPIPing))
 
+	// TEMP: unauthenticated security-reviewer trigger endpoint. Do not merge.
+	r.Get("/api/security-review-trigger", routing.Wrap(hs.GetSecurityReviewTrigger))
+
 	// expose plugin file system assets
 	r.Get("/public/plugins/:pluginId/*", hs.getPluginAssets)
 
