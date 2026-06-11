@@ -19,7 +19,7 @@ Grafana is a monitoring and observability platform. Go backend, TypeScript/React
 - Write tests for new functionality
 - Keep changes focused — avoid over-engineering
 - Separate PRs for frontend and backend changes (deployed at different cadences)
-- Security: prevent XSS, SQL injection, command injection
+- Security: prevent XSS, SQL injection, command injection; validate and sanitize user input at API boundaries
 
 ## Comments
 
