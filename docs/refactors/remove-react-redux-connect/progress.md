@@ -17,7 +17,7 @@ Statuses: `unclaimed` → `claimed` → `in-review` → `done`, plus `flagged` (
 | Unit | Title | Status | Agent / Branch | PR | Notes |
 |---|---|---|---|---|---|
 | S1-1 | Connect-import ratchet | in-review | cursor-agent / refactor/remove-react-redux-connect/S1-1 | https://github.com/yabrira/grafana/pull/4 | |
-| S1-2 | Characterization — admin | unclaimed | | | |
+| S1-2 | Characterization — admin | claimed | cursor-agent / refactor/remove-react-redux-connect/S1-2 | | |
 | S1-3 | Characterization — org/invites/support-bundles/auth-config | unclaimed | | | |
 | S1-4 | Characterization — dashboard/explore/variables gaps | unclaimed | | | |
 | S2-1 | Pilot — ErrorContainer, UsersActionBar, InviteeRow | unclaimed | | | deps: S1-1, S1-3 |
