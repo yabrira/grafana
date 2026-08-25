@@ -44,6 +44,7 @@ const (
 	GrafanaComAuthModule = "oauth_grafana_com"
 	GrafanaNetAuthModule = "oauth_grafananet"
 	OktaAuthModule       = "oauth_okta"
+	AppleAuthModule      = "oauth_apple"
 
 	// labels
 	SAMLLabel = "SAML"
@@ -58,6 +59,7 @@ const (
 	GithubLabel       = "GitHub"
 	GrafanaComLabel   = "grafana.com"
 	OktaLabel         = "Okta"
+	AppleLabel        = "Apple"
 )
 
 // GetAuthProviderLabel returns the label for the given auth module.
@@ -74,6 +76,8 @@ func GetAuthProviderLabel(authModule string) string {
 		return GitLabLabel
 	case OktaAuthModule, strings.TrimPrefix(OktaAuthModule, "oauth_"):
 		return OktaLabel
+	case AppleAuthModule, strings.TrimPrefix(AppleAuthModule, "oauth_"):
+		return AppleLabel
 	case GrafanaComAuthModule, GrafanaNetAuthModule, strings.TrimPrefix(GrafanaComAuthModule, "oauth_"), strings.TrimPrefix(GrafanaNetAuthModule, "oauth_"):
 		return GrafanaComLabel
 	case SAMLAuthModule, strings.TrimPrefix(SAMLAuthModule, "auth."):

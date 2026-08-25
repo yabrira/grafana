@@ -862,6 +862,9 @@ func TestService_List(t *testing.T) {
 					"grafana_com": {
 						"enabled": false,
 					},
+					"apple": {
+						"enabled": false,
+					},
 				}
 			},
 			want: []*models.SSOSettings{
@@ -908,6 +911,11 @@ func TestService_List(t *testing.T) {
 				},
 				{
 					Provider: "grafana_com",
+					Settings: map[string]any{"enabled": false},
+					Source:   models.System,
+				},
+				{
+					Provider: "apple",
 					Settings: map[string]any{"enabled": false},
 					Source:   models.System,
 				},
@@ -1034,6 +1042,12 @@ func TestService_ListWithRedactedSecrets(t *testing.T) {
 						"client_secret": "client_secret",
 						"client_id":     "client_id",
 					},
+					"apple": {
+						"enabled":       true,
+						"secret":        "secret",
+						"client_secret": "client_secret",
+						"client_id":     "client_id",
+					},
 				}
 			},
 			want: []*models.SSOSettings{
@@ -1090,6 +1104,16 @@ func TestService_ListWithRedactedSecrets(t *testing.T) {
 				},
 				{
 					Provider: "azuread",
+					Settings: map[string]any{
+						"enabled":       true,
+						"secret":        "*********",
+						"client_secret": "*********",
+						"client_id":     "client_id",
+					},
+					Source: models.System,
+				},
+				{
+					Provider: "apple",
 					Settings: map[string]any{
 						"enabled":       true,
 						"secret":        "*********",
@@ -1160,6 +1184,12 @@ func TestService_ListWithRedactedSecrets(t *testing.T) {
 						"client_secret": "client_secret",
 						"client_id":     "client_id",
 					},
+					"apple": {
+						"enabled":       false,
+						"secret":        "secret",
+						"client_secret": "client_secret",
+						"client_id":     "client_id",
+					},
 				}
 			},
 			want: []*models.SSOSettings{
@@ -1215,6 +1245,16 @@ func TestService_ListWithRedactedSecrets(t *testing.T) {
 				},
 				{
 					Provider: "azuread",
+					Settings: map[string]any{
+						"enabled":       false,
+						"secret":        "*********",
+						"client_secret": "*********",
+						"client_id":     "client_id",
+					},
+					Source: models.System,
+				},
+				{
+					Provider: "apple",
 					Settings: map[string]any{
 						"enabled":       false,
 						"secret":        "*********",
@@ -2398,6 +2438,7 @@ func Test_ProviderService(t *testing.T) {
 				"grafana_com",
 				"azuread",
 				"okta",
+				"apple",
 				"ldap",
 			},
 			strategiesLength: 2,
@@ -2413,6 +2454,7 @@ func Test_ProviderService(t *testing.T) {
 				"grafana_com",
 				"azuread",
 				"okta",
+				"apple",
 				"ldap",
 				"saml",
 			},
@@ -2452,6 +2494,7 @@ func setupTestEnv(t *testing.T, isLicensingEnabled, keepFallbackStratergies bool
 		"google":        true,
 		"generic_oauth": true,
 		"gitlab":        true,
+		"apple":         true,
 	}
 
 	cfg := &setting.Cfg{

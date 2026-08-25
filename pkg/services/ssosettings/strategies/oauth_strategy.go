@@ -22,6 +22,7 @@ var extraKeysByProvider = map[string]map[string]connectors.ExtraKeyInfo{
 	social.GoogleProviderName:       connectors.ExtraGoogleSettingKeys,
 	social.GrafanaComProviderName:   connectors.ExtraGrafanaComSettingKeys,
 	social.GrafanaNetProviderName:   connectors.ExtraGrafanaComSettingKeys,
+	social.AppleProviderName:        connectors.ExtraAppleSettingKeys,
 }
 
 var _ ssosettings.FallbackStrategy = (*OAuthStrategy)(nil)

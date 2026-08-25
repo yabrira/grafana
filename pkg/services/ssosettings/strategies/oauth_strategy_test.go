@@ -151,6 +151,11 @@ func TestGetProviderConfig_ExtraFields(t *testing.T) {
 
 	[auth.google]
 	validate_hd = true
+
+	[auth.apple]
+	team_id = TEAMID
+	key_id = KEYID
+	private_key_path = /tmp/AuthKey.p8
 	`
 
 	iniFile, err := ini.Load([]byte(iniWithExtraFields))
@@ -202,6 +207,15 @@ func TestGetProviderConfig_ExtraFields(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, true, result["validate_hd"])
+	})
+
+	t.Run(social.AppleProviderName, func(t *testing.T) {
+		result, err := strategy.GetProviderConfig(context.Background(), social.AppleProviderName)
+		require.NoError(t, err)
+
+		require.Equal(t, "TEAMID", result["team_id"])
+		require.Equal(t, "KEYID", result["key_id"])
+		require.Equal(t, "/tmp/AuthKey.p8", result["private_key_path"])
 	})
 }
 

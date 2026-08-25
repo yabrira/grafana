@@ -3,6 +3,7 @@ package clients
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"strings"
@@ -179,6 +180,36 @@ func TestOAuth_Authenticate(t *testing.T) {
 				ExternalGroups:  []string{"grp1", "grp2"},
 				OAuthToken:      &oauth2.Token{},
 				OrgRoles:        map[int64]org.RoleType{1: org.RoleAdmin},
+				ClientParams: authn.ClientParams{
+					SyncUser:        true,
+					SyncTeams:       true,
+					AllowSignUp:     true,
+					FetchSyncedUser: true,
+					SyncOrgRoles:    true,
+					LookUpParams:    login.UserLookupParams{},
+				},
+			},
+		},
+		{
+			desc: "should authenticate when state and code are posted in the form",
+			req: &authn.Request{
+				HTTPRequest: formPostOAuthRequest("state=some-state&code=auth-code"),
+			},
+			oauthCfg:         &social.OAuthInfo{Enabled: true},
+			addStateCookie:   true,
+			stateCookieValue: "some-state",
+			isEmailAllowed:   true,
+			userInfo: &social.BasicUserInfo{
+				Id:    "123",
+				Name:  "name",
+				Email: "some@email.com",
+				Role:  "Admin",
+			},
+			expectedIdentity: &authn.Identity{
+				Email:           "some@email.com",
+				AuthenticatedBy: login.AzureADAuthModule,
+				AuthID:          "123",
+				Name:            "name",
 				ClientParams: authn.ClientParams{
 					SyncUser:        true,
 					SyncTeams:       true,
@@ -667,4 +698,10 @@ func mustParseURL(s string) *url.URL {
 		panic(err)
 	}
 	return u
+}
+
+func formPostOAuthRequest(body string) *http.Request {
+	req := httptest.NewRequest(http.MethodPost, "http://grafana.com/login/apple", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req
 }

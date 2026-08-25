@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -108,6 +109,64 @@ func TestOAuthLogin_Redirect(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestOAuthLogin_AppleFormPostCookies(t *testing.T) {
+	server := SetupAPITestServer(t, func(hs *HTTPServer) {
+		hs.Cfg = setting.NewCfg()
+		hs.SecretsService = fakes.NewFakeSecretsService()
+		hs.authnService = &authntest.FakeService{
+			ExpectedRedirect: &authn.Redirect{
+				URL: "https://appleid.apple.com/auth/authorize",
+				Extra: map[string]string{
+					authn.KeyOAuthState: "some-state",
+					authn.KeyOAuthPKCE:  "pkce-value",
+				},
+			},
+		}
+	})
+	server.HttpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
+	res, err := server.Send(server.NewGetRequest("/login/apple"))
+	require.NoError(t, err)
+	defer func() { require.NoError(t, res.Body.Close()) }()
+
+	require.Equal(t, http.StatusFound, res.StatusCode)
+	require.GreaterOrEqual(t, len(res.Cookies()), 2)
+
+	for _, cookie := range res.Cookies() {
+		if cookie.Name == OauthStateCookieName || cookie.Name == OauthPKCECookieName {
+			assert.Equal(t, http.SameSiteNoneMode, cookie.SameSite)
+			assert.True(t, cookie.Secure)
+		}
+	}
+}
+
+func TestOAuthLogin_AuthorizationCodeFormPost(t *testing.T) {
+	server := SetupAPITestServer(t, func(hs *HTTPServer) {
+		hs.Cfg = setting.NewCfg()
+		hs.Cfg.LoginCookieName = "some_name"
+		hs.SecretsService = fakes.NewFakeSecretsService()
+		hs.authnService = &authntest.FakeService{
+			ExpectedIdentity: &authn.Identity{
+				SessionToken: &usertoken.UserToken{UnhashedToken: "some-token"},
+			},
+		}
+	})
+	server.HttpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
+	req := server.NewPostRequest("/login/apple", strings.NewReader("code=auth-code&state=some-state"))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	res, err := server.Send(req)
+	require.NoError(t, err)
+	defer func() { require.NoError(t, res.Body.Close()) }()
+
+	assert.Equal(t, http.StatusFound, res.StatusCode)
+	assert.Equal(t, "/", res.Header.Get("Location"))
 }
 
 func TestOAuthLogin_AuthorizationCode(t *testing.T) {

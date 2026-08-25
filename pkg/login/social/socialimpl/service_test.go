@@ -40,7 +40,7 @@ func TestIntegrationSocialService_ProvideService(t *testing.T) {
 	}{
 		{
 			name:                                "should load all social connectors",
-			expectedSocialMapLength:             7,
+			expectedSocialMapLength:             8,
 			expectedGenericOAuthSkipOrgRoleSync: false,
 		},
 	}

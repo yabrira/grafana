@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -124,7 +125,7 @@ func (c *OAuth) Authenticate(ctx context.Context, r *authn.Request) (*authn.Iden
 	}
 
 	// get state returned by the idp and hash it
-	stateQuery := hashOAuthState(r.HTTPRequest.URL.Query().Get(oauthStateQueryName), c.cfg.SecretKey, oauthCfg.ClientSecret)
+	stateQuery := hashOAuthState(oauthRequestParam(r.HTTPRequest, oauthStateQueryName), c.cfg.SecretKey, oauthCfg.ClientSecret)
 	// compare the state returned by idp against the one we stored in cookie
 	if stateQuery != stateCookie.Value {
 		return nil, errOAuthInvalidState.Errorf("provided state did not match stored state")
@@ -162,7 +163,7 @@ func (c *OAuth) Authenticate(ctx context.Context, r *authn.Request) (*authn.Iden
 		)
 	}
 
-	token, err := connector.Exchange(clientCtx, r.HTTPRequest.URL.Query().Get("code"), opts...)
+	token, err := connector.Exchange(clientCtx, oauthRequestParam(r.HTTPRequest, "code"), opts...)
 	if err != nil {
 		return nil, errOAuthTokenExchange.Errorf("failed to exchange code to token: %w", err)
 	}
@@ -177,7 +178,7 @@ func (c *OAuth) Authenticate(ctx context.Context, r *authn.Request) (*authn.Iden
 		}
 	}
 
-	userInfo, err := connector.UserInfo(ctx, connector.Client(clientCtx, token), token)
+	userInfo, err := connector.UserInfo(connectors.ContextWithAppleFormUser(ctx, oauthRequestParam(r.HTTPRequest, "user")), connector.Client(clientCtx, token), token)
 	if err != nil {
 		var sErr *connectors.SocialError
 		if errors.As(err, &sErr) {
@@ -372,6 +373,21 @@ func genOAuthState(secret, seed string) (string, string, error) {
 func hashOAuthState(state, secret, seed string) string {
 	hashBytes := sha256.Sum256([]byte(state + secret + seed))
 	return hex.EncodeToString(hashBytes[:])
+}
+
+func oauthRequestParam(r *http.Request, name string) string {
+	if r == nil {
+		return ""
+	}
+	if r.URL != nil {
+		if v := r.URL.Query().Get(name); v != "" {
+			return v
+		}
+	}
+	if r.Method == http.MethodPost {
+		return r.FormValue(name)
+	}
+	return ""
 }
 
 func getOAuthSignoutRedirectURL(cfg *setting.Cfg, oauthCfg *social.OAuthInfo) string {
