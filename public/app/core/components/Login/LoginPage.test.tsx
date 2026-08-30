@@ -53,6 +53,12 @@ describe('Login Page', () => {
     expect(screen.getByRole('link', { name: 'Sign up' })).toHaveAttribute('href', '/signup');
   });
 
+  it('does not show a Sign in with appleid button when Apple OAuth is not configured', () => {
+    render(<LoginPage />);
+
+    expect(screen.queryByRole('link', { name: 'Sign in with appleid' })).not.toBeInTheDocument();
+  });
+
   it('should pass validation checks for username field', async () => {
     render(<LoginPage />);
 
