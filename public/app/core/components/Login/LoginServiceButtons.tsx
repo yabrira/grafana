@@ -72,6 +72,12 @@ const loginServices: () => LoginServices = () => {
       icon: config.oauth?.generic_oauth?.icon || ('signin' as const),
       hrefName: 'generic_oauth',
     },
+    apple: {
+      bgColor: '#6B6B6B',
+      enabled: true,
+      name: 'appleid',
+      icon: 'signin',
+    },
   };
 };
 
