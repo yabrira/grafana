@@ -100,6 +100,12 @@ describe('Login Page', () => {
     expect(screen.getByRole('link', { name: 'Sign in with Okta Test' })).toBeInTheDocument();
   });
 
+  it('does not render a Sign in with appleid button', () => {
+    render(<LoginPage />);
+
+    expect(screen.queryByRole('link', { name: 'Sign in with appleid' })).not.toBeInTheDocument();
+  });
+
   it('shows oauth errors', async () => {
     config.loginError = 'Oh no there was an error :(';
 
