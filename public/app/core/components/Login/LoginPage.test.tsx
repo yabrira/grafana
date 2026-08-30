@@ -100,6 +100,15 @@ describe('Login Page', () => {
     expect(screen.getByRole('link', { name: 'Sign in with Okta Test' })).toBeInTheDocument();
   });
 
+  it('does not show an Apple sign-in button when Apple OAuth is not configured', () => {
+    config.oauth = {};
+
+    render(<LoginPage />);
+
+    expect(screen.queryByRole('link', { name: 'Sign in with appleid' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Sign in with apple/i })).not.toBeInTheDocument();
+  });
+
   it('shows oauth errors', async () => {
     config.loginError = 'Oh no there was an error :(';
 
