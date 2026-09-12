@@ -1,0 +1,37 @@
+name: React-Redux Connect Ratchet
+
+on:
+  pull_request:
+    paths:
+      - 'public/app/**'
+      - 'scripts/check-react-redux-connect-ratchet.sh'
+      - 'scripts/ci/react-redux-connect-baseline'
+      - '.github/workflows/react-redux-connect-ratchet.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'public/app/**'
+      - 'scripts/check-react-redux-connect-ratchet.sh'
+      - 'scripts/ci/react-redux-connect-baseline'
+      - '.github/workflows/react-redux-connect-ratchet.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  connect-ratchet:
+    name: Connect import ratchet
+    runs-on: ubuntu-arm64-small
+    permissions:
+      contents: read
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Check react-redux connect import count
+        run: ./scripts/check-react-redux-connect-ratchet.sh
