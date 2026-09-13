@@ -72,10 +72,12 @@ const loginServices: () => LoginServices = () => {
       icon: config.oauth?.generic_oauth?.icon || ('signin' as const),
       hrefName: 'generic_oauth',
     },
+    // ACDY-18 stub: always shown so the Apple login path is reviewable.
+    // No backend OAuth connector yet — /login/apple is still incomplete.
     apple: {
-      bgColor: '#6B6B6B',
+      bgColor: '#000000',
       enabled: true,
-      name: 'appleid',
+      name: 'Apple',
       icon: 'signin',
     },
   };

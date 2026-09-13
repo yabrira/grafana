@@ -100,6 +100,13 @@ describe('Login Page', () => {
     expect(screen.getByRole('link', { name: 'Sign in with Okta Test' })).toBeInTheDocument();
   });
 
+  it('renders the planted Apple sign-in stub that links to /login/apple', () => {
+    render(<LoginPage />);
+
+    const apple = screen.getByRole('link', { name: 'Sign in with Apple' });
+    expect(apple).toHaveAttribute('href', 'login/apple');
+  });
+
   it('shows oauth errors', async () => {
     config.loginError = 'Oh no there was an error :(';
 
