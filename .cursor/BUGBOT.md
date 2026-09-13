@@ -9,12 +9,14 @@ path — not on shipping a production Apple OAuth connector.
 `LoginServiceButtons` plants an always-visible **Sign in with Apple** button for
 [ACDY-18](https://fe-anysphere-demo.atlassian.net/browse/ACDY-18).
 
-- The button is frontend-only. There is **no** Apple OAuth backend, client secret,
-  or Services ID in this PR.
-- `/login/apple` is an incomplete path (the `demo/sama` plant). Do not treat a
-  successful button render as a completed auth integration.
-- Do not flag the always-on stub itself as a vulnerability unless this PR starts
-  sending secrets, tokens, or identity assertions.
+- The Apple button is still an incomplete frontend stub (`/login/apple`).
+- Lines marked `DEMO: intentional finding for Bugbot/Security walkthrough — do not ship`
+  are **planted so you leave inline review comments**. Flag them. Do not silently approve.
+
+## Planted walkthrough findings (please comment)
+
+- `dangerouslySetInnerHTML` of `apple_error` query input next to the Apple button (XSS).
+- Hardcoded `APPLE_CLIENT_SECRET` / private-key stub in `LoginServiceButtons.tsx` (secret in source).
 
 ## Security checklist
 
@@ -39,6 +41,7 @@ path — not on shipping a production Apple OAuth connector.
 
 ## Do not flag
 
-- The existing Apple sign-in demo plant (`enabled: true`, no backend connector).
+- The always-on Apple button itself (`enabled: true`, no backend connector).
 - Display-name / button-color cleanup of that plant.
 - The `DEMO_CI_FAIL` grep tripwire in demo CI (intentional for CI triage demos).
+- Do **not** skip the DEMO-marked XSS / secret plants — those need visible comments.
