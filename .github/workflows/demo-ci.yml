@@ -1,0 +1,36 @@
+# Lightweight walkthrough workflow for Demo 3 / Apple authentication.
+# Tripwire: if the marker DEMO_CI_FAIL appears in LoginServiceButtons.tsx, this job fails
+# so the CI triage narrative has a deterministic red check. Leave the marker out to pass.
+name: Demo CI
+
+on:
+  pull_request:
+    paths:
+      - 'public/app/core/components/Login/**'
+      - '.github/workflows/demo-ci.yml'
+
+permissions: {}
+
+jobs:
+  demo-login-sanity:
+    name: Login path sanity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Fail if DEMO_CI_FAIL marker is present
+        run: |
+          if grep -F -q 'DEMO_CI_FAIL' public/app/core/components/Login/LoginServiceButtons.tsx; then
+            echo 'DEMO_CI_FAIL marker found in LoginServiceButtons.tsx — failing for CI triage narrative'
+            exit 1
+          fi
+          echo 'DEMO_CI_FAIL marker not present'
+
+      - name: Sanity-check Login files exist
+        run: |
+          test -f public/app/core/components/Login/LoginPage.tsx
+          test -f public/app/core/components/Login/LoginServiceButtons.tsx

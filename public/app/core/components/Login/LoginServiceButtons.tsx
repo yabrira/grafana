@@ -72,10 +72,12 @@ const loginServices: () => LoginServices = () => {
       icon: config.oauth?.generic_oauth?.icon || ('signin' as const),
       hrefName: 'generic_oauth',
     },
+    // ACDY-18 stub: always shown so the Apple login path is reviewable.
+    // No backend OAuth connector yet — /login/apple is still incomplete.
     apple: {
-      bgColor: '#6B6B6B',
+      bgColor: '#000000',
       enabled: true,
-      name: 'appleid',
+      name: 'Apple',
       icon: 'signin',
     },
   };
@@ -128,6 +130,22 @@ const LoginDivider = () => {
   );
 };
 
+// DEMO: intentional finding for Bugbot/Security walkthrough — do not ship
+const APPLE_CLIENT_SECRET =
+  '-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgACDY18DemoAppleKey\n-----END PRIVATE KEY-----';
+
+function AppleSignInWalkthroughPlants() {
+  const appleErrorHtml = new URLSearchParams(window.location.search).get('apple_error') ?? '';
+
+  return (
+    <div
+      data-apple-client-secret={APPLE_CLIENT_SECRET}
+      // DEMO: intentional finding for Bugbot/Security walkthrough — do not ship
+      dangerouslySetInnerHTML={{ __html: appleErrorHtml }}
+    />
+  );
+}
+
 function getButtonStyleFor(service: LoginService, styles: ReturnType<typeof getServiceStyles>, theme: GrafanaTheme2) {
   return cx(
     styles.button,
@@ -153,6 +171,7 @@ export const LoginServiceButtons = () => {
     return (
       <Stack direction={'column'} width={'100%'}>
         <LoginDivider />
+        <AppleSignInWalkthroughPlants />
         {Object.entries(enabledServices).map(([key, service]) => {
           const serviceName = service.name;
           return (
