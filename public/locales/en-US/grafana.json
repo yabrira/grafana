@@ -11809,6 +11809,10 @@
     "signup": {
       "button-label": "Sign up",
       "new-to-question": "New to Grafana?"
+    },
+    "soft-spend-limit": {
+      "body": "You're at {{usedPercent}}% of this month's soft limit ({{usedAmount}} / {{limitAmount}}). Payments still go through. Approvers get a heads-up — not a hard block.",
+      "title": "Soft spend limit"
     }
   },
   "logs": {

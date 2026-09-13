@@ -15,6 +15,7 @@ import LoginCtrl from './LoginCtrl';
 import { LoginForm } from './LoginForm';
 import { LoginLayout, InnerBox } from './LoginLayout';
 import { LoginServiceButtons } from './LoginServiceButtons';
+import { SoftSpendLimitBanner } from './SoftSpendLimitBanner';
 import { UserSignup } from './UserSignup';
 
 const LoginPage = () => {
@@ -41,6 +42,7 @@ const LoginPage = () => {
           <LoginLayout isChangingPassword={isChangingPassword}>
             {!isChangingPassword && (
               <InnerBox>
+                <SoftSpendLimitBanner />
                 {loginErrorMessage && (
                   <Alert className={styles.alert} severity="error" title={t('login.error.title', 'Login failed')}>
                     {loginErrorMessage}

@@ -39,7 +39,9 @@ describe('Login Page', () => {
     render(<LoginPage />);
 
     expect(screen.getByRole('heading', { name: 'Welcome to Grafana' })).toBeInTheDocument();
+    expect(screen.getByRole('alert', { name: 'Soft spend limit' })).toHaveTextContent('82%');
     expect(screen.getByRole('textbox', { name: 'Email or username' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Email or username' })).toBeEnabled();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
 
