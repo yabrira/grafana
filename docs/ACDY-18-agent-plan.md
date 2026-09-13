@@ -5,7 +5,8 @@ This is the Demo 3 Engineer-story plan that produced [PR #14](https://github.com
 ## Inputs
 
 - **Jira:** [ACDY-18](https://fe-anysphere-demo.atlassian.net/browse/ACDY-18) — incomplete Apple Sign-In on this Grafana fork (ticket text may still mention an earlier spend-limit story; the work is Apple auth).
-- **Figma:** [Sign in with Apple](https://www.figma.com/design/r0eXTXohXl3OqiL1euwWlH?node-id=1-8) (`r0eXTXohXl3OqiL1euwWlH`, node `1:8`).
+- **Figma:** [Grafana Login — Sign in with Apple](https://www.figma.com/design/r0eXTXohXl3OqiL1euwWlH?node-id=1-8) (`r0eXTXohXl3OqiL1euwWlH`, node `1:8`).
+- **Design handoff:** [ACDY-18-design-handoff.md](./ACDY-18-design-handoff.md) — Designer agent write-up of that wireframe (layout, Apple button, dark theme).
 - **Base:** `demo/sama` already plants an always-visible Apple button with no backend OAuth connector.
 
 ## Goal
