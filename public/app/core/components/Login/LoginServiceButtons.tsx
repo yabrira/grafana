@@ -6,6 +6,8 @@ import { Trans } from '@grafana/i18n';
 import { Icon, type IconName, LinkButton, Stack, useStyles2, useTheme2 } from '@grafana/ui';
 import config from 'app/core/config';
 
+import { AppleSignInButton } from './AppleSignInButton';
+
 export interface LoginService {
   bgColor: string;
   enabled: boolean;
@@ -72,16 +74,10 @@ const loginServices: () => LoginServices = () => {
       icon: config.oauth?.generic_oauth?.icon || ('signin' as const),
       hrefName: 'generic_oauth',
     },
-    apple: {
-      bgColor: '#6B6B6B',
-      enabled: true,
-      name: 'appleid',
-      icon: 'signin',
-    },
   };
 };
 
-const getServiceStyles = (theme: GrafanaTheme2) => {
+export const getServiceStyles = (theme: GrafanaTheme2) => {
   return {
     button: css({
       color: '#d8d9da',
@@ -128,15 +124,15 @@ const LoginDivider = () => {
   );
 };
 
-function getButtonStyleFor(service: LoginService, styles: ReturnType<typeof getServiceStyles>, theme: GrafanaTheme2) {
+export function getButtonStyleFor(bgColor: string, styles: ReturnType<typeof getServiceStyles>, theme: GrafanaTheme2) {
   return cx(
     styles.button,
     css({
-      backgroundColor: service.bgColor,
-      color: theme.colors.getContrastText(service.bgColor),
+      backgroundColor: bgColor,
+      color: theme.colors.getContrastText(bgColor),
 
       ['&:hover']: {
-        backgroundColor: theme.colors.emphasize(service.bgColor, 0.15),
+        backgroundColor: theme.colors.emphasize(bgColor, 0.15),
         boxShadow: theme.shadows.z1,
       },
     })
@@ -145,32 +141,28 @@ function getButtonStyleFor(service: LoginService, styles: ReturnType<typeof getS
 
 export const LoginServiceButtons = () => {
   const enabledServices = pickBy(loginServices(), (service) => service.enabled);
-  const hasServices = Object.keys(enabledServices).length > 0;
   const theme = useTheme2();
   const styles = useStyles2(getServiceStyles);
 
-  if (hasServices) {
-    return (
-      <Stack direction={'column'} width={'100%'}>
-        <LoginDivider />
-        {Object.entries(enabledServices).map(([key, service]) => {
-          const serviceName = service.name;
-          return (
-            <LinkButton
-              key={key}
-              className={getButtonStyleFor(service, styles, theme)}
-              href={`login/${service.hrefName ? service.hrefName : key}`}
-              target="_self"
-              fullWidth
-            >
-              <Icon className={styles.buttonIcon} name={service.icon} />
-              <Trans i18nKey="login.services.sing-in-with-prefix">Sign in with {{ serviceName }}</Trans>
-            </LinkButton>
-          );
-        })}
-      </Stack>
-    );
-  }
-
-  return null;
+  return (
+    <Stack direction={'column'} width={'100%'}>
+      <LoginDivider />
+      {Object.entries(enabledServices).map(([key, service]) => {
+        const serviceName = service.name;
+        return (
+          <LinkButton
+            key={key}
+            className={getButtonStyleFor(service.bgColor, styles, theme)}
+            href={`login/${service.hrefName ? service.hrefName : key}`}
+            target="_self"
+            fullWidth
+          >
+            <Icon className={styles.buttonIcon} name={service.icon} />
+            <Trans i18nKey="login.services.sing-in-with-prefix">Sign in with {{ serviceName }}</Trans>
+          </LinkButton>
+        );
+      })}
+      <AppleSignInButton />
+    </Stack>
+  );
 };

@@ -11780,6 +11780,11 @@
   },
   "lock-icon": "lock icon",
   "login": {
+    "apple": {
+      "not-configured-body": "This sign-in method is not configured on this Grafana instance. Use one of the other sign-in options.",
+      "not-configured-title": "Sign in with Apple is not available",
+      "sign-in": "Sign in with Apple"
+    },
     "divider": {
       "connecting-text": "or"
     },
