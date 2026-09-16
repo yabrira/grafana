@@ -42,6 +42,7 @@ describe('Login Page', () => {
     expect(screen.getByRole('textbox', { name: 'Email or username' })).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sign in with Apple' })).toBeInTheDocument();
 
     expect(screen.getByRole('link', { name: 'Forgot your password?' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Forgot your password?' })).toHaveAttribute(
