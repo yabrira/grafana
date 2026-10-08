@@ -1017,4 +1017,8 @@ const (
 	// FlagDatasourcesQueryGateway
 	// Data source query gateway
 	FlagDatasourcesQueryGateway = "datasources.queryGateway"
+
+	// FlagAuthAppleStub
+	// Show a stub Continue with Apple button on the login page
+	FlagAuthAppleStub = "authAppleStub"
 )

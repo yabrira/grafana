@@ -1,5 +1,6 @@
 import { css, cx } from '@emotion/css';
 import { pickBy } from 'lodash';
+import { Fragment } from 'react';
 
 import { type GrafanaTheme2, DEFAULT_SAML_NAME } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
@@ -73,9 +74,10 @@ const loginServices: () => LoginServices = () => {
       hrefName: 'generic_oauth',
     },
     apple: {
-      bgColor: '#6B6B6B',
-      enabled: true,
-      name: 'appleid',
+      bgColor: '#111111',
+      enabled: Boolean(config.featureToggles?.authAppleStub),
+      name: 'Apple (Stub)',
+      hrefName: 'apple-stub',
       icon: 'signin',
     },
   };
@@ -155,17 +157,28 @@ export const LoginServiceButtons = () => {
         <LoginDivider />
         {Object.entries(enabledServices).map(([key, service]) => {
           const serviceName = service.name;
+          const isAppleStub = key === 'apple';
           return (
-            <LinkButton
-              key={key}
-              className={getButtonStyleFor(service, styles, theme)}
-              href={`login/${service.hrefName ? service.hrefName : key}`}
-              target="_self"
-              fullWidth
-            >
-              <Icon className={styles.buttonIcon} name={service.icon} />
-              <Trans i18nKey="login.services.sing-in-with-prefix">Sign in with {{ serviceName }}</Trans>
-            </LinkButton>
+            <Fragment key={key}>
+              <LinkButton
+                className={getButtonStyleFor(service, styles, theme)}
+                href={`login/${service.hrefName ? service.hrefName : key}`}
+                target="_self"
+                fullWidth
+              >
+                <Icon className={styles.buttonIcon} name={service.icon} />
+                {isAppleStub ? (
+                  <Trans i18nKey="login.services.continue-with-apple-stub">Continue with Apple (Stub)</Trans>
+                ) : (
+                  <Trans i18nKey="login.services.sing-in-with-prefix">Sign in with {{ serviceName }}</Trans>
+                )}
+              </LinkButton>
+              {isAppleStub && (
+                <div role="status">
+                  <Trans i18nKey="login.services.apple-stub-banner">Demo stub, not linked to Apple</Trans>
+                </div>
+              )}
+            </Fragment>
           );
         })}
       </Stack>
