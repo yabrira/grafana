@@ -83,6 +83,8 @@ func (hs *HTTPServer) registerRoutes() {
 	// not logged in views
 	r.Get("/logout", hs.Logout)
 	r.Post("/login", requestmeta.SetOwner(requestmeta.TeamAuth), quota(string(auth.QuotaTargetSrv)), routing.Wrap(hs.LoginPost))
+	// Before /login/:name so apple-stub is not dispatched as an OAuth provider.
+	r.Get("/login/apple-stub", quota(string(auth.QuotaTargetSrv)), hs.AppleStubLogin)
 	r.Get("/login/:name", quota(string(auth.QuotaTargetSrv)), hs.OAuthLogin)
 
 	r.Get("/login", hs.LoginView)

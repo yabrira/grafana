@@ -3312,6 +3312,15 @@ var (
 			Owner:       grafanaDashboardsSquad,
 			Expression:  "true",
 		},
+		{
+			Name:        "authAppleStub",
+			Description: "Show a stub Continue with Apple button on the login page",
+			Stage:       FeatureStageExperimental,
+			Owner:       identityAccessTeam,
+			Expression:  "false",
+			// CamelCase name has no component prefix, so it has to use the legacy generators.
+			Generate: Generate{LegacyGo: true, LegacyFrontend: true},
+		},
 		// tl;dr: name your new flag `component.featureName`, specify Go and/or React generation targets, and use with OpenFeature!
 		//
 		// Adding a new feature flag? Be sure to check out the updated docs at /contribute/feature-toggles.md#Steps-to-adding-a-feature-toggle

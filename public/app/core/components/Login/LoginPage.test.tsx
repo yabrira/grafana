@@ -16,6 +16,7 @@ setupMockServer();
 
 const originalOauth = config.oauth;
 const originalLoginError = config.loginError;
+const originalAppleStub = config.featureToggles.authAppleStub;
 
 const mockLocationAssign = jest.fn();
 const originalLocation = window.location;
@@ -32,6 +33,7 @@ afterEach(() => {
   mockLocationAssign.mockClear();
   config.oauth = originalOauth;
   config.loginError = originalLoginError;
+  config.featureToggles.authAppleStub = originalAppleStub;
 });
 
 describe('Login Page', () => {
@@ -85,6 +87,27 @@ describe('Login Page', () => {
 
     const [loginRequest] = await capture;
     expect(await loginRequest.clone().json()).toEqual({ user: 'admin', password: 'test' });
+  });
+
+  it('hides the Apple stub when authAppleStub is off', () => {
+    config.featureToggles.authAppleStub = false;
+
+    render(<LoginPage />);
+
+    expect(screen.queryByRole('link', { name: 'Continue with Apple (Stub)' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Demo stub, not linked to Apple')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
+  });
+
+  it('shows the Apple stub button and banner when authAppleStub is on', () => {
+    config.featureToggles.authAppleStub = true;
+
+    render(<LoginPage />);
+
+    const appleLink = screen.getByRole('link', { name: 'Continue with Apple (Stub)' });
+    expect(appleLink).toHaveAttribute('href', 'login/apple-stub');
+    expect(screen.getByText('Demo stub, not linked to Apple')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
   });
 
   it('renders social logins correctly', () => {

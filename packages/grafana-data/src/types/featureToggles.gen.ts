@@ -1391,4 +1391,9 @@ export interface FeatureToggles {
   * @default false
   */
   cujTracking?: boolean;
+  /**
+  * Show a stub Continue with Apple button on the login page
+  * @default false
+  */
+  authAppleStub?: boolean;
 }
