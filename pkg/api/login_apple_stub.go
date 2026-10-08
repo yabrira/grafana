@@ -46,7 +46,8 @@ func (hs *HTTPServer) appleStubUser(c *contextmodel.ReqContext) (*user.User, err
 	}
 
 	// Session login does not use this password. A fresh random value keeps a
-	// shared password out of the source tree.
+	// shared password out of the source tree. Hex is only [0-9a-f], so the
+	// suffix supplies the classes [auth.basic] password_policy requires.
 	buf := make([]byte, 32)
 	if _, err := rand.Read(buf); err != nil {
 		return nil, err
@@ -56,7 +57,7 @@ func (hs *HTTPServer) appleStubUser(c *contextmodel.ReqContext) (*user.User, err
 		Email:         appleStubEmail,
 		Login:         appleStubEmail,
 		Name:          "Apple Stub",
-		Password:      user.Password(hex.EncodeToString(buf)),
+		Password:      user.Password(hex.EncodeToString(buf) + "Aa1!"),
 		EmailVerified: true,
 	})
 }

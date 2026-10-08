@@ -50,6 +50,27 @@ func TestAppleStubLoginToggleOn(t *testing.T) {
 	require.Contains(t, rec.Header().Get("Set-Cookie"), "grafana_session=")
 }
 
+func TestAppleStubLoginCreatesPolicyCompliantPassword(t *testing.T) {
+	var created user.Password
+	hs := appleStubServer(t, featuremgmt.WithFeatures(featuremgmt.FlagAuthAppleStub), &usertest.FakeUserService{
+		GetByEmailFn: func(context.Context, *user.GetUserByEmailQuery) (*user.User, error) {
+			return nil, user.ErrUserNotFound
+		},
+		CreateFn: func(_ context.Context, cmd *user.CreateUserCommand) (*user.User, error) {
+			created = cmd.Password
+			return &user.User{ID: 7, Email: appleStubEmail, Login: appleStubEmail}, nil
+		},
+	})
+
+	rec := appleStubRequest(t, hs)
+
+	cfg := setting.NewCfg()
+	cfg.BasicAuthStrongPasswordPolicy = true
+	require.NoError(t, created.Validate(cfg))
+	require.Equal(t, http.StatusFound, rec.Code)
+	require.Equal(t, "/", rec.Header().Get("Location"))
+}
+
 func appleStubServer(t *testing.T, features featuremgmt.FeatureToggles, users user.Service) *HTTPServer {
 	t.Helper()
 	cfg := setting.NewCfg()
